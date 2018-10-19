@@ -1,15 +1,15 @@
+#define WINVER 0x0500
 #include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <jni.h>
 #include "Main.h"
+#include <stdio.h>
+// #include <stdlib.h>
+#include <jni.h>
+#include <unistd.h>
 
-
-INPUT input;
+INPUT ip;
 HHOOK hHook = NULL;
 KBDLLHOOKSTRUCT kbdstruct;
-JNIEnv genv;
+JNIEnv *genv;
 jobject gobj;
 jmethodID add, get;
 
@@ -21,7 +21,7 @@ LRESULT CALLBACK hook(int nCode, WPARAM wParam, LPARAM lParam)
         if(wParam == WM_KEYDOWN && GetAsyncKeyState(VK_CONTROL) && GetAsyncKeyState(VK_SHIFT))
         {
             kbdstruct = *((KBDLLHOOKSTRUCT *)lParam);
-            printf("%x", kbdstruct.vkcode);
+            printf("%x", kbdstruct.vkCode);
         }
     }
 }
@@ -33,26 +33,28 @@ void setuphook()
     ip.ki.time = 0;
     ip.ki.dwExtraInfo = 0;
     MSG msg;
-	hHock = SetWindowsHookEx(WH_KEYBOARD_LL, MyLowLevelHook , NULL,NULL);
+	hHook = SetWindowsHookEx(WH_KEYBOARD_LL, hook , NULL, (int)NULL);
     printf("Hook setup successfully!");
-    while(!GetMessage(&msg, NULL, NULL, NULL)) {
+    while(!GetMessage(&msg, NULL, (int)NULL, (int)NULL)) 
+    {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 	
-    UnhookWindowsHookEx(hHock);
+    UnhookWindowsHookEx(hHook);
 }
 
 JNIEXPORT void JNICALL Java_Main_grabkey(JNIEnv *env , jobject obj)
 {
 
     // Declaring the java class and methods
-
+    genv = env;
+    gobj = obj;
     jclass javaclass = (*env)->FindClass(env, "Main");
-    if(jclass == NULL)
+    if(javaclass == NULL)
     {
         printf("Class Main not found\nExiting...");
-        sleep(500);
+        Sleep(500);
         exit(-1);
     }
     
@@ -60,7 +62,7 @@ JNIEXPORT void JNICALL Java_Main_grabkey(JNIEnv *env , jobject obj)
     if(add == 0)
     {
         printf("Cannot find method copyData\nExiting...");
-        sleep(500);
+        Sleep(500);
         exit(-1);
     }
 
@@ -68,7 +70,7 @@ JNIEXPORT void JNICALL Java_Main_grabkey(JNIEnv *env , jobject obj)
     if(get == 0)
     {
         printf("Cannot find method getData\nExiting...");
-        sleep(500);
+        Sleep(500);
         exit(-1);
     }
 
