@@ -13,9 +13,34 @@ JNIEnv genv;
 jobject gobj;
 jmethodID add, get;
 
-void hook()
+
+LRESULT CALLBACK hook(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    
+    if(nCode >= 0)
+    {
+        if(wParam == WM_KEYDOWN && GetAsyncKeyState(VK_CONTROL) && GetAsyncKeyState(VK_SHIFT))
+        {
+            kbdstruct = *((KBDLLHOOKSTRUCT *)lParam);
+            printf("%x", kbdstruct.vkcode);
+        }
+    }
+}
+
+void setuphook()
+{
+    ip.type = INPUT_KEYBOARD;
+    ip.ki.wScan = 0;
+    ip.ki.time = 0;
+    ip.ki.dwExtraInfo = 0;
+    MSG msg;
+	hHock = SetWindowsHookEx(WH_KEYBOARD_LL, MyLowLevelHook , NULL,NULL);
+    printf("Hook setup successfully!");
+    while(!GetMessage(&msg, NULL, NULL, NULL)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+	
+    UnhookWindowsHookEx(hHock);
 }
 
 JNIEXPORT void JNICALL Java_Main_grabkey(JNIEnv *env , jobject obj)
@@ -49,5 +74,5 @@ JNIEXPORT void JNICALL Java_Main_grabkey(JNIEnv *env , jobject obj)
 
     // Calling the hook
 
-    hook();
+    setuphook();
 }
