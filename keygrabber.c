@@ -2,7 +2,7 @@
 #include <windows.h>
 #include "Main.h"
 #include <stdio.h>
-// #include <stdlib.h>
+#include <stdlib.h>
 #include <jni.h>
 #include <unistd.h>
 
@@ -13,6 +13,45 @@ JNIEnv *genv;
 jobject gobj;
 jmethodID add, get;
 
+void Copy(int x)
+{
+    
+    ip.ki.wVk = x;
+    ip.ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(1, &ip, sizeof(INPUT));
+    Sleep(35);
+    ip.ki.wVk = VK_SHIFT;
+    ip.ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(1, &ip, sizeof(INPUT));
+    ip.ki.wVk = VK_CONTROL;
+    ip.ki.dwFlags = KEYEVENTF_KEYUP;    
+    SendInput(1, &ip, sizeof(INPUT));
+
+    Sleep(20);
+    ip.ki.wVk = VK_CONTROL;
+    ip.ki.dwFlags = 0; 
+    SendInput(1, &ip, sizeof(INPUT));
+
+    ip.ki.wVk = 'C';
+    ip.ki.dwFlags = 0; 
+    SendInput(1, &ip, sizeof(INPUT));
+
+    ip.ki.wVk = 'C';
+    ip.ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(1, &ip, sizeof(INPUT));
+
+    ip.ki.wVk = VK_CONTROL;
+    ip.ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(1, &ip, sizeof(INPUT));
+
+    printf("COPIED\n");
+
+}
+
+void Paste(int x)
+{
+
+}
 
 LRESULT CALLBACK hook(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -21,7 +60,20 @@ LRESULT CALLBACK hook(int nCode, WPARAM wParam, LPARAM lParam)
         if(wParam == WM_KEYDOWN && GetAsyncKeyState(VK_CONTROL) && GetAsyncKeyState(VK_SHIFT))
         {
             kbdstruct = *((KBDLLHOOKSTRUCT *)lParam);
-            printf("%x", kbdstruct.vkCode);
+            int x = kbdstruct.vkCode;
+            if(x == 0x31 || x == 0x33 || x == 0x35 || x == 0x37)
+            {
+                Copy(x);
+                Sleep(30);
+                (*genv)->CallStaticVoidMethod(genv, gobj, add, (x - 31)/2);
+                
+            }
+            else if(x == 0x32 || x == 0x34 || x == 0x36 || x == 0x38)
+            {
+                (*genv)->CallStaticVoidMethod(genv, gobj, get, (x - 32)/2);
+                Sleep(30);
+                Paste(x);
+            }
         }
     }
 }
@@ -44,9 +96,8 @@ void setuphook()
     UnhookWindowsHookEx(hHook);
 }
 
-JNIEXPORT void JNICALL Java_Main_grabkey(JNIEnv *env , jobject obj)
+JNIEXPORT void JNICALL _Java_Main_grabkey(JNIEnv *env , jobject obj)
 {
-
     // Declaring the java class and methods
     genv = env;
     gobj = obj;
@@ -58,7 +109,7 @@ JNIEXPORT void JNICALL Java_Main_grabkey(JNIEnv *env , jobject obj)
         exit(-1);
     }
     
-    add = (*env)->GetStaticMethodID(env, javaclass, "copyData", "()V");
+    add = (*env)->GetStaticMethodID(env, javaclass, "copyData", "(I)V");
     if(add == 0)
     {
         printf("Cannot find method copyData\nExiting...");
@@ -66,7 +117,7 @@ JNIEXPORT void JNICALL Java_Main_grabkey(JNIEnv *env , jobject obj)
         exit(-1);
     }
 
-    get = (*env)->GetStaticMethodID(env, javaclass, "pasteData", "()V");
+    get = (*env)->GetStaticMethodID(env, javaclass, "pasteData", "(I)V");
     if(get == 0)
     {
         printf("Cannot find method getData\nExiting...");

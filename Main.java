@@ -12,9 +12,9 @@ class Main
         System.loadLibrary("keygrabber");
     }
 
-    public native void grabkey();
+    private native void grabkey();
 
-    public static void copyData(int i)
+    public static void copyData(int i) throws Exception
     {
         clipboard.add(i);
     }

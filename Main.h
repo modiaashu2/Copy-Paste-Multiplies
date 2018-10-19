@@ -12,7 +12,7 @@ extern "C" {
  * Method:    grabkey
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_Main_grabkey
+JNIEXPORT void JNICALL _Java_Main_grabkey
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus

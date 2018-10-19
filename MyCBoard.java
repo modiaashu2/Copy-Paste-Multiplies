@@ -6,9 +6,9 @@ import java.awt.image.*;
 
 class MyCBoard
 {
-    public static void add(int  i)
+    public static void add(int  i) throws Exception
     {
-
+        System.out.println(Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor));
     }
 
     public static void get(int i)
