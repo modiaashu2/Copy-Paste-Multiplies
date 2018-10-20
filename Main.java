@@ -24,6 +24,19 @@ class Main
         clipboard.get(i);
     }
 
+    public static void gui()
+    {
+        EventQueue.invokeLater(new Runnable(){
+            public void run()
+            {
+                GUI g = new GUI();
+                GUI.setVisible(true);
+                GUI.setSize(455, 768);
+                GUI.setResizable(false);
+            }
+        });
+    }
+
     public static void main(String[] args) throws Exception
     {
         clipboard = new MyCBoard();

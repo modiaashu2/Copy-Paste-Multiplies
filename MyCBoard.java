@@ -12,6 +12,7 @@ class MyCBoard
     private static String flavor;
     private static Object[] historydata;
     private static DataFlavor[] historyflavor;
+    
     static{
         cboard = new Clipboard[5];
         data = new Object[5];
