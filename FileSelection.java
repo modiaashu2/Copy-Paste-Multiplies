@@ -11,6 +11,9 @@ class FileSelection implements Transferable
     public FileSelection(java.util.List li)
     {
         list = li;
+        // list = new java.util.ArrayList<File>();
+        // for(Object x : li)
+        // list.add((File)x);
     }
 
     @Override

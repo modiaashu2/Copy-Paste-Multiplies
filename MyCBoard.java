@@ -52,11 +52,11 @@ class MyCBoard
         }
         else if(dataflavor[i].equals(DataFlavor.javaFileListFlavor))
         {
-            fdata = new ImageSelection((Image)data[i]);
+            fdata = new FileSelection((java.util.List)data[i]);
         }
         else if(dataflavor[i].equals(DataFlavor.imageFlavor))
         {
-            fdata = new FileSelection((java.util.List)data[i]);
+            fdata = new ImageSelection((Image)data[i]);
         }
         
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents((Transferable)fdata, new ClipboardOwner(){
