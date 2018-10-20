@@ -9,6 +9,7 @@ class MyCBoard
     private static Clipboard[] cboard;
     private static Object[] data;
     private static DataFlavor[] dataflavor;
+    private static String flavor;
     static{
         cboard = new Clipboard[5];
         data = new Object[5];
@@ -19,23 +20,39 @@ class MyCBoard
         System.out.println("Inside add function java block at " + i + " clipboard");
         Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable tble = c.getContents(null);
-
+        Object writedata = "";
+        flavor = "";
         if(c.getContents(null).isDataFlavorSupported(DataFlavor.stringFlavor))
         {
             data[i] = (String)c.getContents(null).getTransferData(DataFlavor.stringFlavor);
+            writedata = data[i];
             dataflavor[i] = DataFlavor.stringFlavor;
+            flavor = "string";
         }
         if(c.getContents(null).isDataFlavorSupported(DataFlavor.imageFlavor))
         {
             data[i] = (Image)c.getContents(null).getTransferData(DataFlavor.imageFlavor);
             dataflavor[i] = DataFlavor.imageFlavor;
+            writedata = new ImageSerializable((BufferedImage)data[i]);
+            flavor = "image";
         }
         if(c.getContents(null).isDataFlavorSupported(DataFlavor.javaFileListFlavor))
         {
             data[i] = (java.util.List)c.getContents(null).getTransferData(DataFlavor.javaFileListFlavor);
             dataflavor[i] = DataFlavor.javaFileListFlavor;
+            writedata = data[i];
+            flavor = "file";
         }
-        System.out.println(data[i]);
+        System.out.println(data[i] + "\n" + dataflavor[i]);
+
+        FileOutputStream fout = new FileOutputStream("send" + i + ".txt");
+        ObjectOutputStream fw = new ObjectOutputStream(fout);
+        fw.writeObject(writedata);
+        fw.close();
+        FileWriter fw_ = new FileWriter("sendtype" + i + ".txt");
+        fw_.write(flavor);
+        fw_.close();
+        
     }
 
     public static void get(int i) throws Exception
