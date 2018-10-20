@@ -90,8 +90,6 @@ LRESULT CALLBACK hook(int nCode, WPARAM wParam, LPARAM lParam)
             int x = kbdstruct.vkCode;
             if(x == 0x31 || x == 0x33 || x == 0x35 || x == 0x37)
             {
-                Copy(x);
-                Sleep(30);
                 (*genv)->CallStaticVoidMethod(genv, gobj, add, (x - 0x31)/2);
                 
             }
