@@ -19,7 +19,7 @@ class Main
         clipboard.add(i);
     }
 
-    public static void pasteData(int i)
+    public static void pasteData(int i) throws Exception
     {
         clipboard.get(i);
     }

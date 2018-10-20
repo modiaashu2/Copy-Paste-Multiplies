@@ -14,8 +14,7 @@ jobject gobj;
 jmethodID add, get;
 
 void Copy(int x)
-{
-    
+{ 
     ip.ki.wVk = x;
     ip.ki.dwFlags = KEYEVENTF_KEYUP;
     SendInput(1, &ip, sizeof(INPUT));
@@ -50,7 +49,35 @@ void Copy(int x)
 
 void Paste(int x)
 {
+    ip.ki.wVk = x;
+    ip.ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(1, &ip, sizeof(INPUT));
+    Sleep(35);
+    ip.ki.wVk = VK_SHIFT;
+    ip.ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(1, &ip, sizeof(INPUT));
+    ip.ki.wVk = VK_CONTROL;
+    ip.ki.dwFlags = KEYEVENTF_KEYUP;    
+    SendInput(1, &ip, sizeof(INPUT));
 
+    Sleep(20);
+    ip.ki.wVk = VK_CONTROL;
+    ip.ki.dwFlags = 0; 
+    SendInput(1, &ip, sizeof(INPUT));
+
+    ip.ki.wVk = 'V';
+    ip.ki.dwFlags = 0; 
+    SendInput(1, &ip, sizeof(INPUT));
+
+    ip.ki.wVk = 'V';
+    ip.ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(1, &ip, sizeof(INPUT));
+
+    ip.ki.wVk = VK_CONTROL;
+    ip.ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(1, &ip, sizeof(INPUT));
+
+    printf("PASTED\n");
 }
 
 LRESULT CALLBACK hook(int nCode, WPARAM wParam, LPARAM lParam)
@@ -65,12 +92,12 @@ LRESULT CALLBACK hook(int nCode, WPARAM wParam, LPARAM lParam)
             {
                 Copy(x);
                 Sleep(30);
-                (*genv)->CallStaticVoidMethod(genv, gobj, add, (x - 31)/2);
+                (*genv)->CallStaticVoidMethod(genv, gobj, add, (x - 0x31)/2);
                 
             }
             else if(x == 0x32 || x == 0x34 || x == 0x36 || x == 0x38)
             {
-                (*genv)->CallStaticVoidMethod(genv, gobj, get, (x - 32)/2);
+                (*genv)->CallStaticVoidMethod(genv, gobj, get, (x - 0x32)/2);
                 Sleep(30);
                 Paste(x);
             }
