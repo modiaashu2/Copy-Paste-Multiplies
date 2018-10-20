@@ -10,10 +10,14 @@ class MyCBoard
     private static Object[] data;
     private static DataFlavor[] dataflavor;
     private static String flavor;
+    private static Object[] historydata;
+    private static DataFlavor[] historyflavor;
     static{
         cboard = new Clipboard[5];
         data = new Object[5];
         dataflavor = new DataFlavor[5];
+        Queue<Object> history = new Queue<>();
+        Queue<DataFlavor> historyflavor = new Queue<>();
     }
     public static void add(int  i) throws Exception
     {
@@ -28,6 +32,8 @@ class MyCBoard
             writedata = data[i];
             dataflavor[i] = DataFlavor.stringFlavor;
             flavor = "string";
+            serverconnection sv = new serverconnection;
+            sv.postNewItem(data[i]);
         }
         if(c.getContents(null).isDataFlavorSupported(DataFlavor.imageFlavor))
         {
@@ -44,7 +50,13 @@ class MyCBoard
             flavor = "file";
         }
         System.out.println(data[i] + "\n" + dataflavor[i]);
-
+        historydata.add(data[i]);
+        historyflavor.add(dataflavor[i]);
+        if(historydata.size() > 20)
+        {
+            historydata.remove();
+            historyflavor.remove();
+        }
         FileOutputStream fout = new FileOutputStream("send" + i + ".txt");
         ObjectOutputStream fw = new ObjectOutputStream(fout);
         fw.writeObject(writedata);
