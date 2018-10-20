@@ -1,6 +1,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include "KeyGrabber.h"
+#include "Main.h"
 #include <stdio.h>
 #include <stdlib.h>
 jmethodID add, get;
@@ -9,11 +9,11 @@ JNIEXPORT void JNICALL Java_KeyGrabber_listen (JNIEnv *env, jobject obj)
 {
 
 	printf("starting to listen to key Ctrl-Shift-1 (native code)\n");
-	jclass cls = (*env)->FindClass(env, "KeyGrabber");
+	jclass cls = (*env)->FindClass(env, "Main");
 
     if(cls == NULL)
     {
-        printf("Class KeyGrabber not found\nExiting...");
+        printf("Class Main not found\nExiting...");
         Sleep(500);
         exit(-1);
     }
