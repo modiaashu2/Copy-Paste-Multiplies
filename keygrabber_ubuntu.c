@@ -1,11 +1,11 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include "Main.h"
+#include "Main_linux.h"
 #include <stdio.h>
 #include <stdlib.h>
 jmethodID add, get;
 
-JNIEXPORT void JNICALL Java_KeyGrabber_listen (JNIEnv *env, jobject obj)
+JNIEXPORT void JNICALL Java_Main_grabkey (JNIEnv *env, jobject obj)
 {
 
 	printf("starting to listen to key Ctrl-Shift-1 (native code)\n");
@@ -34,11 +34,11 @@ JNIEXPORT void JNICALL Java_KeyGrabber_listen (JNIEnv *env, jobject obj)
         exit(-1);
     }
 
-    jmethodID mid = (*env)->GetStaticMethodID(env, cls, "fire_key_event", "()V" );
-    if(mid ==0){
-	   printf("cannot find method fun\n");
-	   exit(-1);
-    }
+    // jmethodID mid = (*env)->GetStaticMethodID(env, cls, "fire_key_event", "()V" );
+    //if(mid ==0){
+	//  printf("cannot find method fun\n");
+	// exit(-1);
+    //}
 
 
     Display*    dpy     = XOpenDisplay(0);
@@ -55,12 +55,6 @@ JNIEXPORT void JNICALL Java_KeyGrabber_listen (JNIEnv *env, jobject obj)
     unsigned int    modifiers       = ControlMask | ShiftMask;
     int             keycode1        = XKeysymToKeycode(dpy,XK_1);
     int             keycode2        = XKeysymToKeycode(dpy,XK_2);
-    int             keycode3        = XKeysymToKeycode(dpy,XK_3);
-    int             keycode4        = XKeysymToKeycode(dpy,XK_4);
-    int             keycode5        = XKeysymToKeycode(dpy,XK_5);
-    int             keycode6        = XKeysymToKeycode(dpy,XK_6);
-    int             keycode7        = XKeysymToKeycode(dpy,XK_7);
-    int             keycode8        = XKeysymToKeycode(dpy,XK_8);
     Window          grab_window     =  root;
     Bool            owner_events    = False;
     int             pointer_mode    = GrabModeAsync;
@@ -75,12 +69,15 @@ JNIEXPORT void JNICALL Java_KeyGrabber_listen (JNIEnv *env, jobject obj)
     	XNextEvent(dpy, &ev);
     	if(ev.type = KeyPress)
         {
-            printf("Pressed\n");    
+            printf("Pressed\n");
+            Copy(x);
+            Sleep(30);
+            (*env)->CallStaticVoidMethod(env, cls, add, (x - 0x31)/2);
             //(*env)->CallStaticVoidMethod(env, cls, mid);
         }
     }
 
-
+    XUngrabKey(dpy, keycode1, modifiers, grab_window); 
 
     printf("leaving c code\n");
 
