@@ -121,7 +121,7 @@ class GUI extends JFrame
         EventQueue.invokeLater(new Runnable(){
             public void run()
             {
-                GUI g = new GUI();
+                final GUI g = new GUI();
                 g.setVisible(true);
                 g.setSize(455, 600);
                 g.setResizable(false);
@@ -172,7 +172,14 @@ class Vw extends JPanel
         while(it.hasNext())
         {
             Object e = it.next();
-            JLabel z = new JLabel(e.toString());
+            JTextArea z = new JTextArea(e.toString());
+            z.setEditable(false); 
+            z.setLineWrap(true);
+            z.setWrapStyleWord(true);
+            z.setFont(new Font("Arial Black", Font.BOLD, 8));
+            z.setBackground(new Color(21, 99, 91, 0));
+            setVisible(true);
+            //JLabel z = new JLabel(e.toString());
             p[i].add(z);
             i++;
         }
@@ -185,5 +192,13 @@ class MyBox extends JPanel
     {
         setSize(150, 150);
         setBackground(new Color(44, 140, 139, 150));
+        JPanel mainPanel = new JPanel(); //This would be the base panel of your UI
+        JScrollPane pane = new JScrollPane(mainPanel);
+        mainPanel.setOpaque(false);
+        pane.setComponentZOrder(pane.getVerticalScrollBar(), 0);
+        pane.setComponentZOrder(pane.getViewport(), 1);
+        pane.getVerticalScrollBar().setOpaque(false);
+        pane.setBackground(new Color(0, 0, 0, 0));
+        
     }
 }
