@@ -11,7 +11,7 @@ HHOOK hHook = NULL;
 KBDLLHOOKSTRUCT kbdstruct;
 JNIEnv *genv;
 jobject gobj;
-jmethodID add, get;
+jmethodID add, get, disp;
 
 void Copy(int x)
 { 
@@ -101,6 +101,10 @@ LRESULT CALLBACK hook(int nCode, WPARAM wParam, LPARAM lParam)
                 Sleep(30);
                 Paste(x);
             }
+            else if(x == 0x30)
+            {
+                (*genv)->CallStaticVoidMethod(genv, gobj, disp, NULL);
+            }
         }
     }
 }
@@ -152,6 +156,7 @@ JNIEXPORT void JNICALL _Java_Main_grabkey(JNIEnv *env , jobject obj)
         exit(-1);
     }
 
+    disp = (*env)->GetStaticMethodID(env, javaclass, "gui", "()V");
     // Calling the hook
 
     setuphook();

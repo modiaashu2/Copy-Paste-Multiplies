@@ -2,8 +2,9 @@ import java.awt.*;
 import javax.swing.*;
 import java.util.*;
 import java.io.*;
+import java.awt.event.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-
+import java.beans.*;
 class GUI extends JFrame
 {
     Vw p;
@@ -124,6 +125,23 @@ class GUI extends JFrame
                 g.setVisible(true);
                 g.setSize(455, 600);
                 g.setResizable(false);
+
+        //         KeyboardFocusManager.getCurrentKeyboardFocusManager().
+        // addVetoableChangeListener( "focusedWindow",
+        //                            new VetoableChangeListener() {
+        //                              private boolean gained = false;
+
+        //                              @Override
+        //                              public void vetoableChange( PropertyChangeEvent evt ) throws PropertyVetoException {
+        //                                if ( evt.getNewValue() == g ) {
+        //                                  gained = true;
+        //                                }
+        //                                if ( gained && evt.getNewValue() != g ) {
+        //                                  g.dispose();
+        //                                }
+        //                              }
+        //                            } );
+
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
                 Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
@@ -149,7 +167,15 @@ class Vw extends JPanel
             p[i] = new MyBox();
             this.add(p[i]);
         }
-        
+        Iterator it = MyCBoard.historydata.iterator();
+        int i = 0;
+        while(it.hasNext())
+        {
+            Object e = it.next();
+            JLabel z = new JLabel(e.toString());
+            p[i].add(z);
+            i++;
+        }
     }
 }
 

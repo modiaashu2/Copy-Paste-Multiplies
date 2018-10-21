@@ -1,9 +1,10 @@
 import java.awt.*;
-import java.io.*;
+import javax.swing.*;
 import java.util.*;
-import java.awt.datatransfer.*;
-import java.awt.image.*;
-
+import java.io.*;
+import java.awt.event.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+import java.beans.*;
 class Main
 {
     static MyCBoard clipboard;
@@ -29,12 +30,36 @@ class Main
         EventQueue.invokeLater(new Runnable(){
             public void run()
             {
-                GUI g = new GUI();
-                GUI.setVisible(true);
-                GUI.setSize(455, 768);
-                GUI.setResizable(false);
+                final GUI g = new GUI();
+                g.setVisible(true);
+                g.setSize(455, 600);
+                g.setResizable(false);
+
+                KeyboardFocusManager.getCurrentKeyboardFocusManager().
+        addVetoableChangeListener( "focusedWindow",
+                                   new VetoableChangeListener() {
+                                     private boolean gained = false;
+
+                                     @Override
+                                     public void vetoableChange( PropertyChangeEvent evt ) throws PropertyVetoException {
+                                       if ( evt.getNewValue() == g ) {
+                                         gained = true;
+                                       }
+                                       if ( gained && evt.getNewValue() != g ) {
+                                         g.dispose();
+                                       }
+                                     }
+                                   } );
+
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
+                Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
+                int x = (int) rect.getMaxX() - g.getWidth();
+                int y = (int) rect.getMaxY() - g.getHeight();
+                g.setLocation(x, y);
             }
         });
+       System.out.println("hi");
     }
 
     public static void main(String[] args) throws Exception
